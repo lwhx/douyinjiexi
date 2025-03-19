@@ -14,8 +14,6 @@ else
     echo "下载成功"
 fi
 
-pkill -f start.sh
-sleep 2
 chmod +x start.sh
 serv00-play/alist/start.sh
 
