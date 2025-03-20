@@ -21,7 +21,7 @@ if [ -f "$config_file" ]; then
     echo "$config_file 已存在。"
 else
     # 提示用户输入 client_secret 和 server
- read -p "请直接输入后台复制的命令: " USER_INPUT
+    read -p "请直接输入后台复制的命令: " USER_INPUT
 
     # 提取参数
     if [[ $USER_INPUT =~ NZ_SERVER=([^ ]+) ]]; then
@@ -41,8 +41,6 @@ else
     fi
 
     # 创建配置文件
- #   echo "生成配置文件: $config_file"
-
     cat <<EOL > "$config_file"
 client_secret: $NZ_CLIENT_SECRET
 debug: false
@@ -64,14 +62,59 @@ use_gitee_to_upgrade: false
 use_ipv6_country_code: false
 uuid: $(uuidgen)
 EOL
-
-    # 提示完成
-#echo "配置文件已生成: $config_file"
 fi
+
+# 创建 restart.sh 文件
+cat <<EOL > restart.sh
+#!/bin/bash
+
+# 设置脚本路径
+SCRIPT_PATH="serv00-play/alist/start.sh"
+WORK_DIR="serv00-play/alist"
+
+# 检查指定端口是否在使用
+if ! sockstat -4 -l | grep -q ":$PORT"
+then
+    # 如果端口没有被占用，则重新启动脚本
+    cd "\$WORK_DIR"
+    nohup ./start.sh > /dev/null 2>&1 &
+    echo "Restarted start.sh at \$(date)" >> "\$WORK_DIR/restart_log.txt"
+fi
+EOL
+
+# 创建 start.sh 文件
+cat <<EOL > start.sh
+#!/bin/bash
+
+cd serv00-play/alist/
+nohup ./alist server >/dev/null 2>&1 &
+
+cd
+
+cd
+
+cd domains/nezhav1/
+
+bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
+EOL
+
+# 清理安装包
 rm -rf nezha-agent_freebsd_amd64.zip
+
+# 停止已有进程
 pkill -f nezhav1
 sleep 2
+
+# 赋予权限
 chmod +x nezhav1
+chmod +x restart.sh
+chmod +x start.sh
+
+# 启动 nezha agent
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 
-echo "哪吒监控agent启动完成"
+# 运行生成的脚本
+./start.sh
+./restart.sh
+
+echo "哪吒监控agent启动完成，并且已自动创建并运行 restart.sh 和 start.sh"
