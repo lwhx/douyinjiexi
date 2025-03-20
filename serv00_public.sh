@@ -64,8 +64,11 @@ uuid: $(uuidgen)
 EOL
 fi
 
-# 创建 restart.sh 文件
-cat <<EOL > restart.sh
+# 检查并创建 restart.sh 文件
+if [ -f "restart.sh" ]; then
+    echo "restart.sh 已存在，跳过创建。"
+else
+    cat <<EOL > restart.sh
 #!/bin/bash
 
 # 设置脚本路径
@@ -81,9 +84,15 @@ then
     echo "Restarted start.sh at \$(date)" >> "\$WORK_DIR/restart_log.txt"
 fi
 EOL
+    chmod +x restart.sh
+    echo "已创建 restart.sh"
+fi
 
-# 创建 start.sh 文件
-cat <<EOL > start.sh
+# 检查并创建 start.sh 文件
+if [ -f "start.sh" ]; then
+    echo "start.sh 已存在，跳过创建。"
+else
+    cat <<EOL > start.sh
 #!/bin/bash
 cd
 cd
@@ -98,6 +107,9 @@ cd domains/nezhav1/
 
 bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
 EOL
+    chmod +x start.sh
+    echo "已创建 start.sh"
+fi
 
 # 清理安装包
 rm -rf nezha-agent_freebsd_amd64.zip
@@ -108,8 +120,6 @@ sleep 2
 
 # 赋予权限
 chmod +x nezhav1
-chmod +x restart.sh
-chmod +x start.sh
 
 # 启动 nezha agent
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
