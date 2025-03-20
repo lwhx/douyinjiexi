@@ -115,6 +115,8 @@ chmod +x start.sh
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 
 # 运行生成的脚本
+cd
+cd
 cd domains/nezhav1/
 ./start.sh
 ./restart.sh
