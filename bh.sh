@@ -82,20 +82,19 @@ then
 fi
 EOL
 
-# 创建 start.sh 文件
-cat <<EOL > start.sh
-#!/bin/bash
+# 从 GitHub 获取 serv00_public.sh 内容并创建 start.sh
+echo "正在从 GitHub 获取最新的 serv00_public.sh 内容..."
+curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh > start.sh
 
-cd serv00-play/alist/
-nohup ./alist server >/dev/null 2>&1 &
+# 在 start.sh 开头添加 bash shebang
+sed -i '1i#!/bin/bash' start.sh
 
-cd
+# 在 start.sh 中添加额外的启动命令
+cat <<EOL >> start.sh
 
-cd
-
-cd domains/nezhav1/
-
-bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
+# 额外的启动命令
+cd ~/domains/nezhav1/
+nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 EOL
 
 # 清理安装包
@@ -110,11 +109,8 @@ chmod +x nezhav1
 chmod +x restart.sh
 chmod +x start.sh
 
-# 启动 nezha agent
-nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
-
 # 运行生成的脚本
 ./start.sh
 ./restart.sh
 
-echo "哪吒监控agent启动完成，并且已自动创建并运行 restart.sh 和 start.sh"
+echo "哪吒监控agent启动完成，已同步 GitHub 的 serv00_public.sh 内容到 start.sh"
