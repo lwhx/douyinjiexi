@@ -8,7 +8,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/m
 bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
 
 ## bh.sh 为安装哪吒监控agent创建并运行 restart.sh 和 start.sh 
-bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/bh.sh)
 
 后台启动为
 nohup ~/nezha/main >/dev/null 2>&1 &
