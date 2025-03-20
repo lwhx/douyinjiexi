@@ -69,8 +69,8 @@ cat <<EOL > restart.sh
 #!/bin/bash
 
 # 设置脚本路径
-SCRIPT_PATH="serv00-play/alist/start.sh"
-WORK_DIR="serv00-play/alist"
+SCRIPT_PATH="domains/nezhav1/start.sh"
+WORK_DIR="domains/nezhav1/alist"
 
 # 检查指定端口是否在使用
 if ! sockstat -4 -l | grep -q ":$PORT"
@@ -114,6 +114,7 @@ chmod +x start.sh
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 
 # 运行生成的脚本
+cd domains/nezhav1/
 ./start.sh
 ./restart.sh
 
