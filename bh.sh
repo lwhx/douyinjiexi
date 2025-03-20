@@ -85,7 +85,8 @@ EOL
 # 创建 start.sh 文件
 cat <<EOL > start.sh
 #!/bin/bash
-
+cd
+cd
 cd serv00-play/alist/
 nohup ./alist server >/dev/null 2>&1 &
 
