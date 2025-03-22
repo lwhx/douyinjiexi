@@ -117,8 +117,7 @@ sleep 2
 chmod +x nezhav1
 chmod +x restart.sh start.sh
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
-domains/nezhav1/start.sh
-domains/nezhav1/restart.sh
-domains/nezhav1/restart.sh
+cd serv00-play/alist/
+nohup ./alist server >/dev/null 2>&1 &
 
 echo "哪吒监控agent启动完成，restart.sh运行成功"
