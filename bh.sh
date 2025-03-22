@@ -107,6 +107,8 @@ cd domains/nezhav1/
 ./start.sh
 
 bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
+cd
+
 EOL
     chmod +x start.sh
     echo "已创建 start.sh"
