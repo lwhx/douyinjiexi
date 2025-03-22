@@ -101,9 +101,10 @@ cd
 cd
 
 cd domains/nezhav1/
-./start.sh
+chmod +x nezhav1
+chmod +x restart.sh start.sh
+nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 
-bash <(curl -Ls https://raw.githubusercontent.com/jc-lw/douyinjiexi/refs/heads/main/serv00_public.sh)
 cd
 EOL
     chmod +x "$start_file"
