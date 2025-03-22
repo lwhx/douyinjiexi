@@ -115,6 +115,9 @@ pkill -f nezhav1
 sleep 2
 chmod +x nezhav1
 chmod +x restart.sh start.sh
+chmod +x restart.sh start.sh
+chmod +x restart.sh start.sh
+chmod +x restart.sh start.sh
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
 domains/nezhav1/start.sh
 domains/nezhav1/restart.sh
