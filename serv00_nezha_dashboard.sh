@@ -143,13 +143,13 @@ build() {
   git clone https://github.com/nezhahq/nezha.git >/dev/null 2>&1
   cd nezha/cmd/dashboard
   yellow "克隆项目成功"
-  wget https://github.com/nezhahq/admin-frontend/releases/download/v1.10.1/dist.zip >/dev/null 2>&1
+  wget https://github.com/nezhahq/admin-frontend/releases/download/v1.9.0/dist.zip >/dev/null 2>&1
   unzip dist.zip >/dev/null 2>&1
   rm -rf admin-dist
   mv dist admin-dist
   rm -rf dist.zip
 
-  wget https://github.com/hamster1963/nezha-dash-v1/releases/download/v1.27.1/dist.zip >/dev/null 2>&1
+  wget https://github.com/hamster1963/nezha-dash-v1/releases/download/v1.25.0/dist.zip >/dev/null 2>&1
   unzip dist.zip >/dev/null 2>&1
   rm -rf user-dist
   mv dist user-dist
