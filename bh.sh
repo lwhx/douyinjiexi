@@ -73,7 +73,7 @@ else
 
 # 设置脚本路径
 SCRIPT_PATH="domains/nezhav1/start.sh"
-WORK_DIR="domains/nezhav1/alist"
+WORK_DIR="domains/nezhav1"
 
 # 检查指定端口是否在使用
 if ! sockstat -4 -l | grep -q ":$PORT"
