@@ -149,7 +149,7 @@ build() {
   mv dist admin-dist
   rm -rf dist.zip
 
-  wget https://github.com/hamster1963/nezha-dash-v1/releases/download/v1.25.0/dist.zip >/dev/null 2>&1
+  wget https://github.com/hamster1963/nezha-dash-v1/releases/download/v1.27.1/dist.zip >/dev/null 2>&1
   unzip dist.zip >/dev/null 2>&1
   rm -rf user-dist
   mv dist user-dist
