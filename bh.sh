@@ -117,6 +117,9 @@ sleep 2
 chmod +x nezhav1
 chmod +x restart.sh start.sh
 nohup ./nezhav1 -c config.yml >/dev/null 2>&1 &
+
+cd
+cd
 cd serv00-play/alist/
 nohup ./alist server >/dev/null 2>&1 &
 
