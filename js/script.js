@@ -1,10 +1,3 @@
-// 显示调试信息
-function showDebugInfo(message) {
-    const debugEl = document.getElementById('debugInfo');
-    debugEl.textContent = message;
-    setTimeout(() => debugEl.textContent = '', 5000);
-}
-
 // 提取 URL
 function extractURL(text) {
     const urlRegex = /(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))/g;
@@ -14,12 +7,11 @@ function extractURL(text) {
 
 // 解析内容
 async function parseContent() {
-    showDebugInfo('开始解析流程...');
     const input = document.getElementById('urlInput');
     const url = extractURL(input.value);
 
     if (!url) {
-        showAlert('🚨 请输入有效的链接哦～ (´•̥ ̯ •̥`)');
+        alert('🚨 请输入有效的链接哦～ (´•̥ ̯ •̥`)');
         return;
     }
 
@@ -29,17 +21,15 @@ async function parseContent() {
         const apiUrl = `https://api.kxzjoker.cn/api/jiexi_video?url=${encodeURIComponent(url)}`;
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`API 请求失败: ${response.status}`);
-        const data = await response.json();
+ “…json”const data = await response.json();
 
         if (!data || (data.success !== 200 && data.success !== true)) {
             throw new Error('API 返回数据异常');
         }
 
         renderContent(data.data);
-        showDebugInfo('内容渲染完成');
     } catch (error) {
-        showDebugInfo(`错误: ${error.message}`);
-        showAlert(`❌ 发生错误: ${error.message}`);
+        alert(`❌ 发生错误: ${error.message}`);
     } finally {
         toggleLoading(false);
     }
@@ -76,20 +66,6 @@ function renderContent(data) {
         });
     }
     contentBox.style.opacity = 1;
-}
-
-// 显示提示
-function showAlert(message) {
-    const alert = document.createElement('div');
-    alert.style.cssText = `
-        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.95); padding: 15px 30px;
-        border-radius: 30px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        color: #6A5ACD;
-    `;
-    alert.innerHTML = message;
-    document.body.appendChild(alert);
-    setTimeout(() => alert.remove(), 3000);
 }
 
 // 切换加载动画
