@@ -39,7 +39,10 @@ async function parseContent() {
         
         showDebugInfo(`正在请求API: ${url}`);
         const apiUrl = `https://api.kxzjoker.cn/api/jiexi_video?url=${encodeURIComponent(url)}`;
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, { 
+            mode: 'cors',
+            headers: { 'Accept': 'application/json' }
+        });
         showDebugInfo(`收到响应状态: ${response.status}`);
 
         if (!response.ok) {
@@ -58,13 +61,13 @@ async function parseContent() {
     } catch (error) {
         console.error('解析流程错误:', error);
         showDebugInfo(`错误: ${error.message}`);
-        showAlert(`❌ 发生错误: ${error.message}`);
+        showAlert(`❌ 解析失败: ${error.message}，请检查链接或稍后重试`);
     } finally {
         toggleLoading(false);
     }
 }
 
-// 渲染内容（使用 Plyr 播放器）
+// 渲染内容
 function renderContent(data) {
     const contentBox = document.getElementById('contentBox');
     if (!contentBox) {
@@ -80,11 +83,7 @@ function renderContent(data) {
                     <img src="${img}" 
                          alt="图集 ${index + 1}"
                          loading="lazy"
-                         style="border-radius: 10px; 
-                                width: 100%; 
-                                aspect-ratio: 1/1; 
-                                object-fit: cover;
-                                cursor: zoom-in;">
+                         style="border-radius: 10px; width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: zoom-in;">
                     <div class="image-index">${index + 1}</div>
                 </div>
             `).join('');
@@ -94,9 +93,7 @@ function renderContent(data) {
                     <h2 style="color: #9370DB; margin-bottom: 15px;">
                         ${data.title || '未命名图集'}
                     </h2>
-                    <div style="display: grid; 
-                              gap: 10px; 
-                              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                    <div style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
                         ${galleryHTML}
                     </div>
                 </div>
@@ -107,36 +104,40 @@ function renderContent(data) {
                     <h2 style="color: #9370DB; margin-bottom: 15px;">
                         ${data.video_title || '未命名视频'}
                     </h2>
-                    <div style="position: relative; padding-top: 56.25%;">
+                    <div class="video-wrapper">
                         <video id="player" playsinline controls>
                             <source src="${data.video_url}" type="video/mp4">
-                            您的浏览器不支持视频播放
+                            您的浏览器不支持视频播放，请尝试下载查看。
                         </video>
                     </div>
-                    <div style="margin-top: 15px; text-align: center;">
-                        <a href="${data.download_url}" 
-                           style="display: inline-flex;
-                                  align-items: center;
-                                  padding: 12px 25px;
-                                  background: #FFA1C9;
-                                  color: white;
-                                  border-radius: 25px;
-                                  text-decoration: none;
-                                  gap: 8px;">
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a href="${data.download_url || data.video_url}" 
+                           style="display: inline-flex; align-items: center; padding: 12px 25px; 
+                                  background: #FFA1C9; color: white; border-radius: 25px; 
+                                  text-decoration: none; gap: 8px;">
                             <i class="fas fa-download"></i>
                             保存视频 (${(data.video_size || 0).toFixed(1)}MB)
                         </a>
                     </div>
                 </div>
             `;
-            // 初始化 Plyr 播放器
+            // 初始化 Plyr 并添加错误处理
             const player = new Plyr('#player', {
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
                 settings: ['quality', 'speed'],
                 quality: { default: 720, options: [1080, 720, 480, 360] }
             });
+            player.on('error', (event) => {
+                console.error('播放器错误:', event.detail);
+                showAlert('⚠️ 视频播放失败，可能由于格式不受支持或网络限制，请尝试下载');
+            });
+            player.on('ready', () => {
+                showDebugInfo('播放器初始化成功');
+            });
+        } else {
+            showAlert('⚠️ 未找到可播放的内容，请检查链接');
         }
-        contentBox.style.opacity = 1;
+        contentBox.classList.add('show');
     } catch (e) {
         console.error('渲染错误:', e);
         showAlert('内容渲染失败，请检查数据格式');
@@ -147,25 +148,15 @@ function renderContent(data) {
 function showFullImage(url) {
     const overlay = document.createElement('div');
     overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        cursor: zoom-out;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); display: flex; justify-content: center;
+        align-items: center; z-index: 9999; cursor: zoom-out;
     `;
-    
     const img = document.createElement('img');
     img.src = url;
     img.style.maxWidth = '90%';
     img.style.maxHeight = '90%';
     img.style.borderRadius = '10px';
-    
     overlay.onclick = () => overlay.remove();
     overlay.appendChild(img);
     document.body.appendChild(overlay);
@@ -178,22 +169,17 @@ function toggleLoading(show) {
 
 function showAlert(message) {
     const alert = document.createElement('div');
-    alert.style.position = 'fixed';
-    alert.style.bottom = '30px';
-    alert.style.left = '50%';
-    alert.style.transform = 'translateX(-50%)';
-    alert.style.background = 'rgba(255, 255, 255, 0.95)';
-    alert.style.padding = '15px 30px';
-    alert.style.borderRadius = '30px';
-    alert.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
-    alert.style.color = '#6A5ACD';
+    alert.style.cssText = `
+        position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95); padding: 15px 30px; border-radius: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); color: #6A5ACD; z-index: 10000;
+    `;
     alert.innerHTML = message;
-    
     document.body.appendChild(alert);
-    setTimeout(() => alert.remove(), 3000);
+    setTimeout(() => alert.remove(), 4000);
 }
 
-// 确保按钮点击事件绑定（防止重复绑定问题）
+// 事件监听
 document.addEventListener('DOMContentLoaded', () => {
     const parseBtn = document.querySelector('.parse-btn');
     if (parseBtn) {
