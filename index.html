@@ -1,9 +1,11 @@
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ 坤哥解析 ✨</title>
-    <link href="css/css2.css" rel="stylesheet">
+    <link href="/css/css2.css" rel="stylesheet">
+    <link href="/fonts.css" rel="stylesheet">
     <style>
         :root {
             --main-pink: #FFA1C9;
@@ -186,8 +188,9 @@
 
     <div class="debug-info" id="debugInfo"></div>
 
+    <!-- 使用 Font Awesome CDN，替换为你的 Kit URL -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
     <script>
-        // 调试信息显示
         let debugTimer;
         function showDebugInfo(message) {
             const debugEl = document.getElementById('debugInfo');
@@ -196,12 +199,6 @@
             debugTimer = setTimeout(() => debugEl.textContent = '', 5000);
         }
 
-        setInterval(updateTime, 1000);
-        updateTime();
-
-        getWeather();
-
-        // URL提取
         function extractURL(text) {
             try {
                 const urlRegex = /(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*))/g;
@@ -213,10 +210,8 @@
             }
         }
 
-        // 解析内容
         async function parseContent() {
             showDebugInfo('开始解析流程...');
-            
             try {
                 const input = document.getElementById('urlInput');
                 if (!input) throw new Error('找不到输入框元素');
@@ -258,7 +253,6 @@
             }
         }
 
-        // 渲染内容
         function renderContent(data) {
             const contentBox = document.getElementById('contentBox');
             if (!contentBox) {
@@ -337,7 +331,6 @@
             }
         }
 
-        // 显示完整图片
         function showFullImage(url) {
             const overlay = document.createElement('div');
             overlay.style.cssText = `
@@ -365,7 +358,6 @@
             document.body.appendChild(overlay);
         }
 
-        // 工具函数
         function toggleLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
         }
@@ -387,7 +379,6 @@
             setTimeout(() => alert.remove(), 3000);
         }
 
-        // 确保按钮点击事件绑定
         document.querySelector('.parse-btn').addEventListener('click', parseContent);
         document.querySelector('.parse-btn').addEventListener('touchend', parseContent);
     </script>
