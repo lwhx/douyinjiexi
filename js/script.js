@@ -51,17 +51,29 @@ function renderContent(data) {
     contentBox.innerHTML = '';
 
     if (data.video_url) {
+        // 创建 Video.js 播放器
+        const videoId = 'my-video-' + Date.now();
         contentBox.innerHTML = `
             <div class="media-card">
                 <h2 style="color: #9370DB; margin-bottom: 15px;">
                     ${data.video_title || '未命名视频'}
                 </h2>
-                <video controls style="width: 100%; border-radius: 15px;">
+                <video id="${videoId}" class="video-js" controls preload="auto" style="width: 100%;">
                     <source src="${data.video_url}" type="video/mp4">
-                    您的浏览器不支持视频播放
+                    <p>要观看此视频，请启用 JavaScript。</p>
                 </video>
             </div>
         `;
+
+        // 初始化 Video.js 播放器
+        videojs(videoId, {
+            fluid: true, // 响应式布局
+            playbackRates: [0.5, 1, 1.5, 2], // 播放速度选项
+            controlBar: {
+                volumePanel: { inline: false },
+                pictureInPictureToggle: true
+            }
+        });
     }
     contentBox.style.opacity = 1;
 }
