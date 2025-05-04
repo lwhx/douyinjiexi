@@ -99,6 +99,11 @@ function renderContent(data) {
                 </div>
             `;
         } else if (data.video_url) {
+            // 文件名处理（保留中文、字母、数字，其他字符转下划线）
+            const cleanFileName = (data.video_title || 'video')
+                .replace(/[^a-zA-Z0-9\u4e00-\u9fa5_\-]/g, '_')
+                .substring(0, 100);  // 限制文件名长度
+
             contentBox.innerHTML = `
                 <div class="media-card">
                     <h2 style="color: #9370DB; margin-bottom: 15px;">
@@ -112,25 +117,30 @@ function renderContent(data) {
                     </div>
                     <div style="margin-top: 20px; text-align: center;">
                         <a href="${data.download_url || data.video_url}" 
+                           download="${cleanFileName}.mp4"
                            style="display: inline-flex; align-items: center; padding: 12px 25px; 
                                   background: #FFA1C9; color: white; border-radius: 25px; 
-                                  text-decoration: none; gap: 8px;">
+                                  text-decoration: none; gap: 8px;"
+                           onclick="this.style.transform='scale(0.95)'">
                             <i class="fas fa-download"></i>
                             保存视频 (${(data.video_size || 0).toFixed(1)}MB)
                         </a>
                     </div>
                 </div>
             `;
-            // 初始化 Plyr 并添加错误处理
+            
+            // 初始化 Plyr 播放器
             const player = new Plyr('#player', {
                 controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
                 settings: ['quality', 'speed'],
                 quality: { default: 720, options: [1080, 720, 480, 360] }
             });
+            
             player.on('error', (event) => {
                 console.error('播放器错误:', event.detail);
                 showAlert('⚠️ 视频播放失败，可能由于格式不受支持或网络限制，请尝试下载');
             });
+            
             player.on('ready', () => {
                 showDebugInfo('播放器初始化成功');
             });
